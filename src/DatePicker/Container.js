@@ -117,9 +117,12 @@ class Container extends PureComponent {
     if (!Array.isArray(quickSelect)) return undefined
 
     return quickSelect.map(q => {
-      if (!q.value || q.value.length !== 2) return { name: q.name, invalid: true }
-      const date = q.value.map(v => DateFns.toDateWithFormat(v, format))
-      if (DateFns.isInvalid(date[0]) || DateFns.isInvalid(date[1])) return { name: q.name, invalid: true }
+      let invalid = false
+      if (!q.value) return { name: q.name, invalid: true }
+      const date = (Array.isArray(q.value) ? q.value : [q.value]).map(v => DateFns.toDateWithFormat(v, format))
+      if (DateFns.isInvalid(date[0])) invalid = true
+      if (date[1] && DateFns.isInvalid(date[1])) invalid = true
+      if (invalid) return { name: q.name, invalid: true }
       return {
         name: q.name,
         value: date,
@@ -319,8 +322,10 @@ class Container extends PureComponent {
   }
 
   handleClear(e) {
+    const { clearWithUndefined } = this.props
     e.stopPropagation()
-    const value = this.props.range ? ['', ''] : ''
+    const empty = clearWithUndefined ? undefined : ''
+    const value = this.props.range ? [empty, empty] : empty
     this.props.onChange(value, () => {
       this.props.onValueBlur()
       this.handleToggle(false)
@@ -462,7 +467,7 @@ class Container extends PureComponent {
   }
 
   render() {
-    const { range, size, disabled } = this.props
+    const { range, size, disabled, align } = this.props
     const { focus } = this.state
 
     const rtl = isRTL()
@@ -473,6 +478,7 @@ class Container extends PureComponent {
       size && `size-${size}`,
       focus && 'focus',
       disabled === true && 'disabled',
+      align && `align-${align}`,
       getCurrentPosition(this.state.position),
       rtl && 'rtl'
     )
@@ -526,6 +532,8 @@ Container.propTypes = {
   secondStep: PropTypes.number,
   onPickerChange: PropTypes.func,
   disabledTime: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+  align: PropTypes.oneOf(['left', 'right', 'center']),
+  clearWithUndefined: PropTypes.bool,
 }
 
 Container.defaultProps = {

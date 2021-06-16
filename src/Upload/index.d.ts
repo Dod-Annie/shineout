@@ -1,5 +1,6 @@
 import * as React from 'react'
-import {StandardProps, FormItemStandardProps} from "../@types/common"
+import { StandardProps, FormItemStandardProps } from "../@types/common"
+import { PopoverConfirmProps } from '../Popover'
 
 type ReactNode = React.ReactNode;
 
@@ -301,6 +302,14 @@ export interface UploadProps<T> extends StandardProps, OmitFormProps<T[]>{
    */
   showUploadList?: boolean;
 
+  /**
+   * Confirmation before deletion
+   * 
+   * 是否在删除文件和图片前弹出确认
+   * 
+   * default: -
+   */
+  removeConfirm?: string | PopoverConfirmProps;
 }
 
 export interface UploadImageProps<T> extends UploadProps<T>{
@@ -330,7 +339,7 @@ export interface UploadImageProps<T> extends UploadProps<T>{
    *
    * default: a => a
    */
-  renderResult?: (data: any) => ReactNode;
+  renderResult?: (data: any) => string;
 
   /**
    * remove update failed callback
@@ -359,6 +368,55 @@ export interface UploadImageProps<T> extends UploadProps<T>{
    */
   ignorePreview?: boolean;
 
+}
+
+export interface UploadImageHandlerProps extends StandardProps {
+  /**
+   * is disabled
+   * 
+   * 是否禁用
+   * 
+   * default: false
+   * 
+   */
+  disabled?: boolean;
+
+  /**
+   * custom children
+   * 
+   * 自定义内容
+   * 
+   * default: plus 
+   */
+  children?: ReactNode;
+
+  /**
+   * width of element
+   * 
+   * 宽度
+   * 
+   * default: 80
+   */
+  width?: number;
+
+  /**
+   * height of element
+   * 
+   * 高度
+   * 
+   * default: 80
+   */
+  height?: number;
+
+  /**
+   * click callback
+   * 
+   * 点击事件回调
+   * 
+   * default: -
+   * 
+   */
+  onClick?: (e: MouseEvent) => void;
 }
 
 export interface UploadButtonProps<T> extends UploadProps<T> {
@@ -394,11 +452,15 @@ export interface UploadButtonProps<T> extends UploadProps<T> {
 
  export type OmitUploadProps<T> = Omit<UploadProps<T>, ('showUploadList' | 'limit')>;
  // todo  这儿如果使用 OmitUploadProps 就无法继承
- declare class UploadButton<T> extends React.Component<UploadButtonProps<T>, {}> {
+declare class UploadButton<T> extends React.Component<UploadButtonProps<T>, {}> {
   render(): JSX.Element;
 }
 
- declare class UploadImage<T> extends React.Component<UploadImageProps<T>, {}> {
+declare class UploadImage<T> extends React.Component<UploadImageProps<T>, {}> {
+  render(): JSX.Element;
+}
+
+declare class UploadImageHandler extends React.Component<UploadImageHandlerProps, {}> {
   render(): JSX.Element;
 }
 
@@ -406,6 +468,8 @@ export interface UploadButtonProps<T> extends UploadProps<T> {
 
 export declare class Upload<T> extends React.Component<UploadProps<T>, {}> {
   static Image: typeof UploadImage;
+
+  static ImageHandler: typeof UploadImageHandler;
 
   static Button: typeof UploadButton;
 

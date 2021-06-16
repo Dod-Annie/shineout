@@ -10,6 +10,16 @@ StructDataStandardProps<Item>,
 ListItemStandardProps<Item, Value>,
 Pick<CommonProps, 'absolute' | 'clearable' | 'zIndex'>
   {
+
+  /**
+   * show border bottom
+   * 
+   * 仅仅展示下边框
+   * 
+   * default: false
+   */
+  underline?: boolean;
+  
   /**
    * width
    *
@@ -150,7 +160,7 @@ Pick<CommonProps, 'absolute' | 'clearable' | 'zIndex'>
    *
    * default: -
    */
-  onFilter?: (text: string) => (data: Item) => boolean;
+  onFilter?: (text: string) => (((data: Item) => boolean) | void);
 
   /**
    * Merges selected values, valid only in multiselect mode
